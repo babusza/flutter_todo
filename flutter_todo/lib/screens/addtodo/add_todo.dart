@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/models/TodoItems.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class AddTodoItemScreen extends StatefulWidget {
   @override
@@ -7,6 +9,17 @@ class AddTodoItemScreen extends StatefulWidget {
 }
 
 class _AddTodoItemScreenState extends State<AddTodoItemScreen> {
+  TextEditingController textCtl = TextEditingController();
+  Firestore db = Firestore.instance;
+  _addTodoItem() async{
+    if(textCtl.text.length>0){
+      var data = new Map<String, dynamic>();
+      data['id']=1;
+      data['name']=textCtl.text;
+      data['isComplete']=false;
+      db.collection('Todo').add(data);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +29,7 @@ class _AddTodoItemScreenState extends State<AddTodoItemScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                TextFormField(decoration: InputDecoration(labelText: "Todo Name")),
+                TextField(decoration: InputDecoration(labelText: "Todo Name"),controller: textCtl,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -29,6 +42,7 @@ class _AddTodoItemScreenState extends State<AddTodoItemScreen> {
                     RaisedButton(
                       child: Text("Save"),
                       onPressed: () {
+                        _addTodoItem();
                         Navigator.pop(context);
                       },
                     )
